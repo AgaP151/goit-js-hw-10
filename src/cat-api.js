@@ -8,6 +8,7 @@ axios.defaults.headers.common['x-api-key'] = API_KEY;
 
 function fetchBreeds() {
   const BREEDS_URL = `${URL}breeds`;
+ 
   return axios.get(BREEDS_URL).then(res => {
     if (res.status !== 200) { 
       //próbowałam zrobić tutaj !response.ok --> to mi wyrzucało błąd. Dlaczego tak?

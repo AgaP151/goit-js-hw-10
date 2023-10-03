@@ -11,11 +11,16 @@ const refs = {
   catCard: document.querySelector('.cat-info'),
 };
 
-refs.loader.style.display = 'none';
+
 refs.err.style.display = 'none';
 refs.select.style.display = 'none';
 refs.catCard.style.display = 'none';
 
+Loading.dots({
+  svgColor: '#5897fb',
+  svgSize: '130px',
+  messageFontSize: '30px',
+});
 
 fetchBreeds()
   .then(data => {
@@ -25,6 +30,7 @@ fetchBreeds()
     createMarkupOptins(data);
     new SlimSelect({
       select: refs.select,
+      
     });
   })
   .catch(err => {
@@ -46,32 +52,41 @@ function createMarkupOptins(arr) {
 refs.select.addEventListener('change', e => {
   const id = e.target.value;
 
+  Loading.dots({
+    svgColor: '#5897fb',
+    svgSize: '130px',
+    messageFontSize: '30px',
+  });
 
+  refs.loader.style.display = 'flex';
+  refs.catCard.style.display = 'none';
   fetchCatByBreed(id)
     .then(catInfo => {
-      refs.catCard.style.display = 'flex';
+      refs.loader.style.display = 'none';
+      
+      
+      
       createMarkupCards(catInfo);
+      refs.catCard.style.display = 'flex';
     })
     .catch(err => {
       Notify.failure(refs.err.textContent);
     })
     .finally(result => Loading.remove());
+   
 });
 
-function createMarkupCards(data) {
-  const {
-    breeds: { name, description, temperament },
-    url,
-  } = data;
+function createMarkupCards({ breeds, url }) {
+  const { name, description, temperament } = breeds[0];
 
   const card = ` 
-      <img class="cat-img" src="${url}" alt="${name}" height="400" >
+      <img class="cat-img" src="${url}" alt="${name}">
        <div class="cat-right">
       <h1 class="name">${name}</h1>
       <p class="description">${description}</p>
       <p class="temperament"><span class="temperament-span">Temperament:</span> ${temperament}</p>    
       </div>`;
 
-
+ 
   refs.catCard.innerHTML = card;
 }
